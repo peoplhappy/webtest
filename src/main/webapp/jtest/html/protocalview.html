@@ -1,0 +1,261 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>表格控件 - 搜索支持</title>     
+    <meta name="keywords" content="免费控件,免费UI控件,免费开源UI,免费开源UI控件,免费开源UI框架,可编辑表格,datagrid,editgrid,固定列,多表头">  
+    <link href="../../lib/ligerUI/skins/Aqua/css/ligerui-all.css" rel="stylesheet" type="text/css">
+    <link href="../../lib/ligerUI/skins/ligerui-icons.css" rel="stylesheet" type="text/css">
+    <link href="../../lib/ligerUI/skins/Gray/css/all.css" rel="stylesheet" type="text/css">
+    <script src="../../lib/jquery/jquery-1.9.0.min.js" type="text/javascript"></script> 
+    <script src="../../lib/ligerUI/js/ligerui.all.js"></script>
+    <script type="text/javascript">
+        function itemclick(item)
+        {
+            alert(item.text);
+        }
+        function getData() {
+			var url = "http://localhost:8080/protocal/getProtocalAll"
+			var data = {};
+			$.ajax({
+				url : url,
+				type : "GET",
+				async : false,
+				success : function(result) {
+					data.Rows = result.rows
+					data.Total = result.total
+				}
+			});
+			return data
+		}
+        var booldata = [ {
+			third3rd :"true",
+			text : '是'
+		}, {
+			third3rd : "false",
+			text : '否'
+		} ];
+        $(function ()
+        {
+            window['g'] =
+            manager=$("#maingrid").ligerGrid({
+                height: '100%',
+                columns : [
+					{
+						display : 'id',
+						name : 'id',
+						align : 'left',
+						width : 120
+					},
+					{
+						display : '第三方软件包路径',
+						name : 'Third3rdPackageUrl',
+						minWidth : 60,
+						align : 'left',
+						editor : {
+							type : 'text'
+						}
+					},
+					{
+						display : '是否第三方',
+						name : 'third3rd',
+						width : 120,
+						align : 'left',
+						editor : {
+							type : 'select',
+							data : booldata,
+							valueField : 'third3rd'
+						},
+						render : function(item) {
+							if (item.third3rd == false
+									|| item.third3rd == "false") {
+								return '否';
+							}
+							return '是';
+						}
+					},
+					{
+						display : '编程语言',
+						name : 'languageName',
+						heightAlign : 'center',
+						editor : {
+							type : 'text'
+						}
+					},
+					{
+						display : '方法名称',
+						name : 'methodName',
+						width : 170,
+						align : 'left',
+						editor : {
+							type : 'text'
+						}
+					},
+					{
+						display : '类文件路径',
+						name : 'classFileUrl',
+						width : 170,
+						align : 'left',
+						editor : {
+							type : 'text'
+						}
+					},
+					{
+						display : '传输协议名称',
+						name : 'protocalname',
+						width : 170,
+						align : 'left',
+						editor : {
+							type : 'text'
+						}
+					},
+					{
+						display : '传输方式',
+						name : 'sendType',
+						width : 170,
+						align : 'left',
+						editor : {
+							type : 'text'
+						}
+					}, { display: '操作', isSort: false, width: 120, render: function (rowdata, rowindex, value)
+		                {
+	                    var h = "";
+	                    if (!rowdata._editing)
+	                    {
+	                        h += "<a href='javascript:beginEdit(" + rowindex + ")'>修改</a> ";
+	                        h += "<a href='javascript:deleteRow(" + rowindex + ")'>删除</a> "; 
+	                    }
+	                    else
+	                    {
+	                        h += "<a href='javascript:endEdit(" + rowindex + ")'>提交</a> ";
+	                        h += "<a href='javascript:cancelEdit(" + rowindex + ")'>取消</a> "; 
+	                    }
+	                    return h;
+	                }
+	                }], data:getData(), pageSize: 30, rownumbers: true,
+                toolbar: {
+                    items: [
+                    { text: '增加', click: addNewRow, icon: 'add' },
+                    ]
+                },
+                autoFilter:true,
+                checkbox : true,
+				clickToEdit : false,
+				enabledEdit : true,
+				onReload:function(grid){
+					var managers = $("#maingrid").ligerGetGridManager()
+					managers.set({data:getData()})
+				},
+            });
+              
+ 
+            $("#pageloading").hide();
+        });
+        function modifyitem(){
+        	
+        }
+        function beginEdit(rowid) {
+			manager.beginEdit(rowid);
+
+		}
+
+		function endEdit(rowid) {
+			//获取当前行信息
+			manager.endEdit(rowid);
+			var data = manager.getRow(rowid);
+		    var resultdata=sumitresult(data)
+		    //更新行信息
+		    manager.updateRow(rowid,resultdata)
+		}
+		function cancelEdit(rowid) {
+			manager.cancelEdit(rowid);
+		}
+
+		function deleteRow(rowid) {
+			var data = manager.getRow(rowid);
+			var resultdata=deleteInfo(data)
+			if(resultdata){
+				manager.deleteRow(rowid);
+			}else{
+				alert("删除协议配置项失败!!")
+			}
+		}
+		
+		function addNewRow() {
+			manager.addRow({
+				ID : "",
+				Third3rdPackageUrl : "",
+				third3rd : false,
+				languageName : "",
+				methodurl : "",
+				protocalname : "",
+				sendType : "",
+
+			});
+		}
+		//将修改后结果上传到后端,优先检查是否为空
+		function sumitresult(datas){
+			var url = "http://localhost:8080/protocal/submitprotocal"
+				var resultdata;
+				$.ajax({
+					url : url,
+					type : "POST",
+					async : false,
+					data:{
+						"id" : datas.id,
+						"ThirdPackageUrl" : datas.ThirdPackageUrl,
+						"classFileUrl" : datas.classFileUrl,
+						"languageName" : datas.languageName,
+						"methodName":datas.methodName,
+						"protocalname":datas.protocalname,
+						"sendType":datas.sendType,
+						"third3rd":eval(datas.third3rd)
+					},
+					success : function(result) {
+						resultdata=result.rows[0]
+					}
+				});
+				return resultdata
+		}
+		
+		function deleteInfo(datas){
+			var url = "http://localhost:8080/protocal/deleteprotocals"
+				var resultdata;
+				$.ajax({
+					url : url,
+					type : "DELETE",
+					async : false,
+					data:{
+						"id" : datas.id,
+						"ThirdPackageUrl" : datas.ThirdPackageUrl,
+						"classFileUrl" : datas.classFileUrl,
+						"languageName" : datas.languageName,
+						"methodName":datas.methodName,
+						"protocalname":datas.protocalname,
+						"sendType":datas.sendType,
+						"isThird3rd":eval(datas.third3rd)
+					},
+					success : function(res) {
+						resultdata=res.result
+					}
+				});
+				return resultdata
+		}
+ 
+    </script>
+ 
+ 
+<div class="l-loading" style="display:block" id="pageloading"></div>
+ <a class="l-button" style="width:120px;float:left; margin-left:10px; display:none;" onclick="deleteRow()">删除选择的行</a>
+ 
+  
+ <div class="l-clear"></div>
+ 
+    <div id="maingrid"></div>
+    
+  <div style="display:none;">
+   
+</div>
+</head>
+
+</html>
