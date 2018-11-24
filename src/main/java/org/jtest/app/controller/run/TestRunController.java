@@ -83,12 +83,10 @@ public class TestRunController {
 
 	private class RunThread implements Runnable {
 		private RunType type;
-		private String threadName;
 		private Object testObj;
 
 		public RunThread(RunType type, Object testObject) {
 			this.type = type;
-			this.threadName = RunTimeConfig.getCurrentThreadName();
 			this.testObj = testObject;
 		}
 
@@ -200,8 +198,8 @@ public class TestRunController {
 		 * 讲config中的信息全部压入map中
 		 */
 		private void readConfig(String projectId) {
-			if (RunTimeConfig.configmap.containsKey(this.threadName)) {
-				RunTimeConfig.configmap.remove(this.threadName);
+			if (RunTimeConfig.configmap.containsKey(RunTimeConfig.getCurrentThreadName())) {
+				RunTimeConfig.configmap.remove(RunTimeConfig.getCurrentThreadName());
 			}
 
 			List<ConfigInfo> configinfolist = configservice.findByprojectId(projectId);
@@ -211,15 +209,15 @@ public class TestRunController {
 				hashmap.put(info.getKeyname(), info.getValuestr());
 			}
 			hashmap.put("projectId", projectId);
-			RunTimeConfig.configmap.put(this.threadName, hashmap);
+			RunTimeConfig.configmap.put(RunTimeConfig.getCurrentThreadName(), hashmap);
 		}
 
 		private String getMapValue(String key) {
-			return RunTimeConfig.configmap.get(threadName).get(key);
+			return RunTimeConfig.configmap.get(RunTimeConfig.getCurrentThreadName()).get(key);
 		}
 
 		private void putMapValue(String key, String value) {
-			RunTimeConfig.configmap.get(threadName).put(key, value);
+			RunTimeConfig.configmap.get(RunTimeConfig.getCurrentThreadName()).put(key, value);
 		}
 
 		private InfsResult HttpExcute(ProtocalInfo protocalinfo, InfsInfo inf, TestCaseItem item) {
@@ -261,6 +259,8 @@ public class TestRunController {
 						url = ParamReplaceUtil.Replace(url);
 						String headerinfo = ParamReplaceUtil.Replace(inf.getHeaderinfo());
 						String paramterinfo = ParamReplaceUtil.Replace(inf.getParamterinfo());
+						LogManager.getLogger().logInfo(inf.getInfsname()+"请求头为:"+headerinfo);
+						LogManager.getLogger().logInfo(inf.getInfsname()+"请求参数为:"+paramterinfo);
 						Map<String, Object> header = gson.fromJson(headerinfo, new TypeToken<Map<String, Object>>() {
 						}.getType());
 						RequestParamter parameter = gson.fromJson(paramterinfo, RequestParamter.class);
