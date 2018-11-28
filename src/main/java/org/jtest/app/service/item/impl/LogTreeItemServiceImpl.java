@@ -74,5 +74,11 @@ public class LogTreeItemServiceImpl implements LogTreeItemService{
 		return itemdao.findByitemType(itemType);
 	}
 
+	@Override
+	public LogTreeItem saveResult(LogTreeItem item) {
+		// TODO Auto-generated method stub
+		return itemdao.save(item);
+	}
+
 
 }

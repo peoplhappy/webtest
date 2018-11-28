@@ -11,8 +11,10 @@
 <link href="../lib/ligerUI/skins/Aqua/css/ligerui-all.css"
 	rel="stylesheet" type="text/css" />
 <script src="../lib/ligerUI/js/core/base.js" type="text/javascript"></script>
-<script src="../lib/ligerUI/js/plugins/ligerLayout.js" type="text/javascript"></script>
-<script src="../lib/ligerUI/js/plugins/ligerAccordion.js" type="text/javascript"></script>
+<script src="../lib/ligerUI/js/plugins/ligerLayout.js"
+	type="text/javascript"></script>
+<script src="../lib/ligerUI/js/plugins/ligerAccordion.js"
+	type="text/javascript"></script>
 <script src="../lib/ligerUI/js/plugins/ligerTab.js"></script>
 <script src="../lib/jquery.cookie.js"></script>
 <script src="../lib/json2.js"></script>
@@ -32,9 +34,10 @@
 	var tabItems = [];
 	$(function() {
 		foldermenu = getfoldermenu()
-		projectmenu=getprojectmenu()
-		testsuitemenu=gettestsuitmenu()
-		testcasemenu=gettestcasemenu()
+		projectmenu = getprojectmenu()
+		testsuitemenu = gettestsuitmenu()
+		testcasemenu = gettestcasemenu()
+		//为func1和func添加点击事件
 		//布局
 		$("#layout1").ligerLayout({
 			leftWidth : 190,
@@ -82,82 +85,84 @@
 			$(this).removeClass("l-link-over");
 		});
 		//树
-	
-		$("#tree1").ligerTree({
-			nodeWidth : 200,
-			data : [getItem("26")],
-			checkbox : true,
-			delay : true,
-			onExpand : function(node) {
-				var datas = getChildren(node.data)
-				var manager = $("#tree1").ligerGetTreeManager();
-				if(datas!=undefined){
-					manager.reloadNode(node.target, datas)
-				}
-				
-			},
-			onClick : function(node) {
-				var data = node.data
-				//var manager = $("#tree1").ligerGetTreeManager();
-				//var parent=manager.getParent(node)				
 
-			},
-			onSelect : function(node) {				
-				var tabid = $(node.target).attr("tabid");
-				if (!tabid) {
-				     tabid = new Date().getTime();
-				     $(node.target).attr("tabid", tabid)
-				}
-				f_addTab(tabid, node.data.text, node.data.url);
-			},
-			onContextmenu : function(node, e) {
-				var data = node.data
-				if(node==undefined||node==null){
-					projectmenu.show({
-						top : e.pageY,
-						left : e.pageX
-					});
-				}else if (data.itemType == "FOLDER" || data.itemType == "PROJECT") {
-					foldermenu.menuNodeID = node.data.id
-					foldermenu.menuNodeParentID = node.data.parentid;
-					foldermenu.menuNodeText = node.data.text;
-					foldermenu.show({
-						top : e.pageY,
-						left : e.pageX
-					});
-				}else if(data.itemType=="TESTCASE"){
-					testcasemenu.menuNodeID = node.data.id
-					testcasemenu.menuNodeParentID = node.data.parentid;
-					testcasemenu.menuNodeText = node.data.text;
-					testcasemenu.show({
-						top : e.pageY,
-						left : e.pageX
-					});
-				}else if(data.itemType=="TESTSUITES"){
-					testsuitemenu.menuNodeID = node.data.id
-					testsuitemenu.menuNodeParentID = node.data.parentid;
-					testsuitemenu.menuNodeText = node.data.text;
-					testsuitemenu.show({
-						top : e.pageY,
-						left : e.pageX
-					});
-				}else if(data.itemType=="ROOT"){
-					projectmenu.menuNodeID = node.data.id
-					projectmenu.menuNodeParentID = node.data.parentid;
-					projectmenu.menuNodeText = node.data.text;
-					projectmenu.show({
-						top : e.pageY,
-						left : e.pageX
-					});
-				}
+		$("#tree1")
+				.ligerTree(
+						{
+							nodeWidth : 200,
+							data : [ getItem("26") ],
+							checkbox : true,
+							delay : true,
+							onExpand : function(node) {
+								var datas = getChildren(node.data)
+								var manager = $("#tree1").ligerGetTreeManager();
+								if (datas != undefined) {
+									manager.reloadNode(node.target, datas)
+								}
 
+							},
+							onClick : function(node) {
+								var data = node.data
+								//var manager = $("#tree1").ligerGetTreeManager();
+								//var parent=manager.getParent(node)				
 
-				return false;
-			},
-			idFieldName : 'id',
-			slide : false
-		});
-		
+							},
+							onSelect : function(node) {
+								var tabid = $(node.target).attr("tabid");
+								if (!tabid) {
+									tabid = new Date().getTime();
+									$(node.target).attr("tabid", tabid)
+								}
+								f_addTab(tabid, node.data.text, node.data.url);
+							},
+							onContextmenu : function(node, e) {
+								var data = node.data
+								if (node == undefined || node == null) {
+									projectmenu.show({
+										top : e.pageY,
+										left : e.pageX
+									});
+								} else if (data.itemType == "FOLDER"
+										|| data.itemType == "PROJECT") {
+									foldermenu.menuNodeID = node.data.id
+									foldermenu.menuNodeParentID = node.data.parentid;
+									foldermenu.menuNodeText = node.data.text;
+									foldermenu.show({
+										top : e.pageY,
+										left : e.pageX
+									});
+								} else if (data.itemType == "TESTCASE") {
+									testcasemenu.menuNodeID = node.data.id
+									testcasemenu.menuNodeParentID = node.data.parentid;
+									testcasemenu.menuNodeText = node.data.text;
+									testcasemenu.show({
+										top : e.pageY,
+										left : e.pageX
+									});
+								} else if (data.itemType == "TESTSUITES") {
+									testsuitemenu.menuNodeID = node.data.id
+									testsuitemenu.menuNodeParentID = node.data.parentid;
+									testsuitemenu.menuNodeText = node.data.text;
+									testsuitemenu.show({
+										top : e.pageY,
+										left : e.pageX
+									});
+								} else if (data.itemType == "ROOT") {
+									projectmenu.menuNodeID = node.data.id
+									projectmenu.menuNodeParentID = node.data.parentid;
+									projectmenu.menuNodeText = node.data.text;
+									projectmenu.show({
+										top : e.pageY,
+										left : e.pageX
+									});
+								}
+
+								return false;
+							},
+							idFieldName : 'id',
+							slide : false
+						});
+
 		$("#tree2").ligerTree({
 			nodeWidth : 200,
 			data : getlogItemLstByType("PROJECT"),
@@ -166,10 +171,10 @@
 			onExpand : function(node) {
 				var datas = getLogChildren(node.data)
 				var manager = $("#tree2").ligerGetTreeManager();
-				if(datas!=undefined){
+				if (datas != undefined) {
 					manager.reloadNode(node.target, datas)
 				}
-				
+
 			},
 			onClick : function(node) {
 				var data = node.data
@@ -177,18 +182,18 @@
 				//var parent=manager.getParent(node)				
 
 			},
-			onSelect : function(node) {				
+			onSelect : function(node) {
 				var tabid = $(node.target).attr("tabid");
 				if (!tabid) {
-				     tabid = new Date().getTime();
-				     $(node.target).attr("tabid", tabid)
+					tabid = new Date().getTime();
+					$(node.target).attr("tabid", tabid)
 				}
 				f_addTab(tabid, node.data.text, node.data.url);
 			},
 			idFieldName : 'id',
 			slide : false
 		});
-		
+
 		function openNew(url) {
 			var jform = $('#opennew_form');
 			if (jform.length == 0) {
@@ -483,10 +488,10 @@ body {
 	<div id="layout1"
 		style="width: 99.2%; margin: 0 auto; margin-top: 4px;">
 		<div position="left" title="主要菜单" id="accordion1">
-			<div title="功能列表" class="l-scroll">
+			<div title="功能列表" class="l-scroll" id="func1">
 				<ul id="tree1" style="margin-top: 3px;">
 			</div>
-			<div title="日志管理器" class="l-scroll">
+			<div title="日志管理器" class="l-scroll" id="func2">
 				<ul id="tree2" style="margin-top: 3px;">
 			</div>
 			<div title="实验室">

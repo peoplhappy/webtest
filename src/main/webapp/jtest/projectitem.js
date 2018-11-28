@@ -116,6 +116,9 @@ function createItem(parent, name, itemType) {
 			manager.reloadNode(parent, children)
 		}
 	});
+	//刷新tree2
+	var manager2 = $("#tree2").ligerGetTreeManager();
+	manager2.refreshTree()
 	return data
 }
 

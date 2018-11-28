@@ -15,4 +15,6 @@ public interface LogTreeItemService {
 	public List<LogTreeItem> findItemByProjectIdandItemType(LogItemType type,String projectId);
 	
 	public List<LogTreeItem> findItemType(LogItemType itemType);
+	
+	public LogTreeItem saveResult(LogTreeItem item);
 }

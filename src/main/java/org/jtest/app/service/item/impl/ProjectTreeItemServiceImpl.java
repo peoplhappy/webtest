@@ -158,6 +158,7 @@ public class ProjectTreeItemServiceImpl implements ProjectTreeItemService{
 		logtreeitem.setItemType(LogItemType.PROJECT);
 		logtreeitem.setProjectId(String.valueOf(newProjectItem.getId()));
 		logtreeitem.setText(newProjectItem.getText());
+		itemservice.saveResult(logtreeitem);
 		return newProjectItem;
 		
 		
@@ -179,7 +180,7 @@ public class ProjectTreeItemServiceImpl implements ProjectTreeItemService{
 			item.setUrl(url);
 		}else if(item.getItemType().equals(ItemType.TESTSUITS)){
 			//新建testsuites
-			url="../jtest/html/testsuitesview.html?projectId="+item.getProjectId();
+			url="../jtest/html/testsuitesview.html?testcaseId=";
 			item.setUrl(url);
 		}
 		

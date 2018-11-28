@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.jtest.app.controller.BaseController;
+import org.jtest.app.model.item.ItemType;
 import org.jtest.app.model.item.ProjectTreeItem;
 import org.jtest.app.service.item.ProjectTreeItemService;
 import org.jtest.app.util.StringUtil;
@@ -44,6 +47,7 @@ public class TreeItemController extends BaseController{
     public List<ProjectTreeItem> getItemList(@RequestParam(value = "parentid", defaultValue = "1") String parentid){
     	//ItemModel model=itemservice.findByitemType("ROOT");
     	//ItemModel model2=itemservice.findByid(2L);
+		HttpServletRequest request=this.getRequest();
     	List<ProjectTreeItem> model=itemservice.findChildLst(parentid);
     	System.out.println("获取数据"+gson.toJson(model,new TypeToken<List<ProjectTreeItem>>(){}.getType()));
 		return model;

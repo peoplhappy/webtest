@@ -5,7 +5,8 @@ import java.util.Map;
  
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
- 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
@@ -19,7 +20,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  *
  */
 public abstract class BaseController {
- 
    public HttpServletRequest getRequest() {
       HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder
               .getRequestAttributes()).getRequest();
@@ -31,4 +31,6 @@ public abstract class BaseController {
               .getRequestAttributes()).getResponse();
       return response;
    }
+
+ 
 }
