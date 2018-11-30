@@ -11,9 +11,11 @@ import org.jtest.app.model.item.LogItemType;
 import org.jtest.app.model.item.LogTreeItem;
 import org.jtest.app.model.item.ProjectTreeItem;
 import org.jtest.app.model.testcase.TestCase;
+import org.jtest.app.model.testcase.TestSuite;
 import org.jtest.app.service.item.LogTreeItemService;
 import org.jtest.app.service.item.ProjectTreeItemService;
 import org.jtest.app.service.testcase.TestCaseService;
+import org.jtest.app.service.testcase.TestSuiteService;
 import org.jtest.app.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,9 @@ public class ProjectTreeItemServiceImpl implements ProjectTreeItemService{
 	
 	@Autowired
 	private LogTreeItemService itemservice;
+	
+	@Autowired
+	private TestSuiteService testsuiteservice;
 	
 	@Override
 	public List<ProjectTreeItem> findChildLst(String parentId) {
@@ -180,7 +185,13 @@ public class ProjectTreeItemServiceImpl implements ProjectTreeItemService{
 			item.setUrl(url);
 		}else if(item.getItemType().equals(ItemType.TESTSUITS)){
 			//新建testsuites
-			url="../jtest/html/testsuitesview.html?testcaseId=";
+			TestSuite testsuite=new TestSuite();
+			testsuite.setDescription("");
+			testsuite.setProjectId(item.getProjectId());
+			testsuite.setTestcaseIds("[]");
+			testsuite.setTestsuiteName(item.getText());
+	        testsuite=testsuiteservice.createTestSuite(testsuite);
+			url="../jtest/html/testsuitsview.html?projectId="+item.getProjectId()+"&testsuiteId="+testsuite.getId();;
 			item.setUrl(url);
 		}
 		

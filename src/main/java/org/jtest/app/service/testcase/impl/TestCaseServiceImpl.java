@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.jtest.app.dao.testcase.TestCaseDao;
 import org.jtest.app.dao.testcase.TestCaseItemDao;
+import org.jtest.app.model.item.ItemType;
 import org.jtest.app.model.testcase.TestCase;
 import org.jtest.app.model.testcase.TestCaseItem;
 import org.jtest.app.service.testcase.TestCaseService;
@@ -57,5 +58,13 @@ public class TestCaseServiceImpl implements TestCaseService{
 		// TODO Auto-generated method stub
 		testcaseitemdao.delete(item);
 		return true;
+	}
+	/**
+	 * 找出该projectid下的所有testcase
+	 */
+	@Override
+	public List<TestCase> findTestCases(String projectId) {
+		// TODO Auto-generated method stub
+		return testcasedao.findByprojectId(projectId);
 	}
 }

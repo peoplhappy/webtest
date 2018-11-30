@@ -42,4 +42,10 @@ public class TestSuiteServiceImpl implements TestSuiteService {
 		return testcaseList;
 	}
 
+	@Override
+	public TestSuite createTestSuite(TestSuite suite) {
+		// TODO Auto-generated method stub
+		return testsuitdao.save(suite);
+	}
+
 }

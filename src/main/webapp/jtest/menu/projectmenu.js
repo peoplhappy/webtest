@@ -163,7 +163,14 @@ function deleteTestCase(e) {
 	});
 }
 function createTestSuites(e) {
-	console.log(foldermenu)
+	var manager = $("#tree1").ligerGetTreeManager();
+	var node = manager.getDataByID(foldermenu.menuNodeID)
+
+	$.ligerDialog.prompt('请输入测试集名称', function(yes, value) {
+		if (yes) {
+			createItem(node, value, "TESTSUITS");
+		}
+	});
 }
 function deleteTestSuites(e) {
 	console.log(foldermenu)

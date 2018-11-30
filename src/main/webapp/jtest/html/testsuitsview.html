@@ -12,54 +12,209 @@
 <script src="../../lib/ligerUI/js/core/base.js" type="text/javascript"></script>
 <script src="../../lib/ligerUI/js/plugins/ligerTree.js"
 	type="text/javascript"></script>
+<script src="../../lib/ligerUI/js/plugins/ligerPopupEdit.js"
+	type="text/javascript"></script>
+<script src="../../jtest/stringutil.js"></script>
+<script src="../../jtest/websocket.js" type="text/javascript"></script>
+<script src="http://cdn.bootcss.com/sockjs-client/1.1.1/sockjs.min.js"></script>
+<script src="http://cdn.bootcss.com/stomp.js/2.3.3/stomp.js"></script>
+    
+<script src="../../lib/ligerUI/js/plugins/ligerCheckBox.js"
+	type="text/javascript"></script>
+    
+<script src="../../lib/ligerUI/js/plugins/ligerResizable.js"
+	type="text/javascript"></script>
+    
+<script src="../../lib/ligerUI/js/plugins/ligerComboBox.js"
+	type="text/javascript"></script>
 <script type="text/javascript">
-	var manager = null;
+	var testsuiteid = null;
 	$(function() {
-		$("#tree1").ligerTree({
-			url : 'json.txt',
-			ajaxType : 'get'
-		});
-		manager = $("#tree1").ligerGetTreeManager();
-	});
-	function collapseAll() {
-		manager.collapseAll();
-	}
-	function expandAll() {
-		manager.expandAll();
-	}
-	function getChecked() {
-		var notes = manager.getChecked();
-		var text = "";
-		for (var i = 0; i < notes.length; i++) {
+		testsuiteid = GetQueryString(window.location.search.substr(1),
+				"testsuiteId")
+		projectid = GetQueryString(window.location.search.substr(1),
+				"testsuiteId")
+		testsuite = getTreeData()
+		datas = {}
+		datas.children = true
+		datas.id = testsuite["id"]
+		datas.text = testsuite["testsuiteName"]
+		$("#testsuitetree").ligerTree({
+			nodeWidth : 200,
+			data : [ datas ],
+			checkbox : true,
+			delay : true,
+			onExpand : function(node) {
+				var datas = getTestCase()
+				var manager = $("#testsuitetree").ligerGetTreeManager();
+				var childdatas = []
+				for ( var i in datas) {
+					childdata = {}
+					childdata.id = datas[i].id
+					childdata.text = datas[i].testcaseName
+					childdata.projectId = datas[i].projectId
+					childdatas.push(childdata)
+				}
 
-			text += notes[i].data.text + ",";
-		}
-		alert('选择的节点数：' + text);
+				if (datas != undefined) {
+					manager.reloadNode(node.target, childdatas)
+				}
+
+			}
+		});
+
+		$("#testcasetree").ligerTree({
+			nodeWidth : 200,
+			data : getProjectTestCase(),
+			checkbox : true,
+			delay : true
+		});
+
+		manager = $("#testsuitetree").ligerGetTreeManager();
+
+		$("#pageloading").hide();
+	});
+	function getTreeData() {
+		var url = "http://localhost:8080/testsuite/gettestsuite?testsuiteId="
+				+ testsuiteid
+		var data = {};
+		$.ajax({
+			url : url,
+			type : "GET",
+			async : false,
+			success : function(result) {
+				data = result;
+			}
+		});
+		return data
 	}
-	function getSelected() {
-		var note = manager.getSelected();
-		alert('选择的是:' + note.data.text);
+	function getTestCase() {
+		var url = "http://localhost:8080/testsuite/gettestcases"
+		var data = {};
+		$.ajax({
+			url : url,
+			type : "POST",
+			data : testsuite,
+			async : false,
+			success : function(result) {
+				data = result;
+			}
+		});
+		return data
+
+	}
+
+	function getAllTestCase() {
+		var url = "http://localhost:8080/testsuite/gettestcases"
+		var data = {};
+		$.ajax({
+			url : url,
+			type : "POST",
+			data : testsuite,
+			async : false,
+			success : function(result) {
+				data = result;
+			}
+		});
+		return data
+	}
+
+	function getProjectTestCase() {
+		var url = "http://localhost:8080/testsuite/getprojecttestcase"
+		var testdata = []
+		$.ajax({
+			url : url,
+			type : "POST",
+			data : testsuite,
+			async : false,
+			success : function(result) {
+				for ( var i in result) {
+					var o = {
+						"id" : result[i].id,
+						"text" : result[i].testcaseName,
+					}
+					testdata.push(o)
+				}
+			}
+		});
+		return testdata
+	}
+	//添加测试用例
+	function addTestCase() {
+		manager = $("#testsuitetree").ligerGetTreeManager();
+		manager2 = $("#testcasetree").ligerGetTreeManager();
+		var checkarray = manager2.getChecked()
+		if (checkarray.length == 0) {
+			alert("请勾选测试用列")
+		} else {
+			testcaseIds = JSON.parse(testsuite["testcaseIds"]);
+			for ( var i in checkarray) {
+				testcaseIds.push(checkarray[i].data.id)
+			}
+			testsuite["testcaseIds"] = JSON.stringify(testcaseIds)
+		}
+		//更新到数据库
+		updateTestSuite()
+		//更新tree1，tree2
+		manager.refreshTree()
+		manager2.reload()
+
+	}
+
+	function updateTestSuite() {
+		var url = "http://localhost:8080/testsuite/createtestsuite"
+
+		$.ajax({
+			url : url,
+			type : "POST",
+			data : testsuite,
+			async : false,
+			success : function(result) {
+				console.log(result)
+			}
+		});
+
+	}
+
+	function runtestsuite() {
+		var url = "http://localhost:8080/run/runtestsuits"
+
+		$.ajax({
+			url : url,
+			type : "POST",
+			data : {
+				userId : uid,
+				projectId : projectid,
+				testcaseId : testsuite.id
+			},
+			async : false,
+			success : function(result) {
+				console.log(result)
+			}
+		});
 	}
 </script>
 </head>
 <body>
-
-
-
-
-	<a class="l-button" onclick="collapseAll()"
+	<a class="l-button" onclick="runtestsuite()"
 		style="float: left; margin-right: 10px;">运行测试集</a>
 	<div class="l-clear"></div>
-	<br>
-	<a class="l-button" onclick="getChecked()"
+	<a class="l-button" onclick="addTestCase()"
 		style="float: left; margin-right: 10px;">添加测试用例</a>
 	<br>
+
+
 	<br>
 	<!-- 带复选框和图标 -->
-	<div
-		style="width: 200px; height: 300px; border: 1px solid #ccc; overflow: auto; clear: both;">
-		<ul id="tree1" class="l-tree" ligeruiid="tree1" style="width: 156px;"></ul>
-		<div class="l-tree-loading" style="display: block;"></div>
+	<div class="all" style="width: 800px; height: 600px;">
+		<div
+			style="width: 300px; height: 400px; margin: 10px; margin-right: 1px; float: left; border: 1px solid #ccc; overflow: auto;">
+			<ul id="testsuitetree" style="width: 200px;">
+		</div>
+		<div
+			style="width: 300px; height: 400px; margin: 10px; margin-left: 1px; float: left; border: 1px solid #ccc; overflow: auto;">
+			<ul id="testcasetree" style="width: 200px; cursor: default;">
+		</div>
 	</div>
 
 	<div style="display: none"></div>

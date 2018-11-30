@@ -30,6 +30,7 @@ import org.jtest.app.model.testcase.TestCaseDto;
 import org.jtest.app.model.testcase.TestCaseItem;
 import org.jtest.app.model.testcase.TestCaseResult;
 import org.jtest.app.model.testcase.TestSuite;
+import org.jtest.app.model.testcase.TestSuitesResult;
 import org.jtest.app.model.websocket.WebSocketMessage;
 import org.jtest.app.runtime.RunTimeConfig;
 import org.jtest.app.service.config.ConfigService;
@@ -81,6 +82,7 @@ public class TestRunController extends BaseController{
 	@Autowired
 	private TestSuiteService testsuiteservice;
 
+
 	@PostMapping("/run/runtestcase")
 	public void RunTestCase(TestCaseDto dto) {
 		TestCase testcase=testcaseservice.findTestCase(dto.getProjectId(), dto.getTestcaseId());
@@ -114,7 +116,7 @@ public class TestRunController extends BaseController{
 				// 获取所有需要执行的接口
 				TestCase testcase = (TestCase) testObj;
 				try {
-					runtestcase(userId,testcase);
+					runtestcase(userId,testcase,null);
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -128,14 +130,28 @@ public class TestRunController extends BaseController{
 		
 		private void runTestSuite(String userId,TestSuite testsuite){
 			List<TestCase> testcaselist=testsuiteservice.findTestCase(testsuite.getProjectId(), testsuite.getTestcaseIds());
+			if(testcaselist.size()==0){
+				return;
+			}
+			List<LogTreeItem> projectItemList=logtreeitemservice.findItemByProjectIdandItemType(LogItemType.PROJECT, testsuite.getProjectId());
+			LogTreeItem testsuiteResultItem=new LogTreeItem();
+			testsuiteResultItem.setHaschildren(false);
+			testsuiteResultItem.setItemType(LogItemType.TESTSUITLOG);
+			testsuiteResultItem.setParentid(String.valueOf(projectItemList.get(0).getId()));
+			testsuiteResultItem.setText(testsuite.getTestsuiteName()+"_"+System.currentTimeMillis());
+			long resultId=logtreeitemservice.createItem(testsuiteResultItem).getId();
 			for(TestCase testcase:testcaselist){
-				
+				try {
+					runtestcase(userId,testcase,String.valueOf(resultId));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 
-		private void runtestcase(String userId,TestCase testcase) throws Exception {
+		private void runtestcase(String userId,TestCase testcase,String parentId) throws Exception {
 			String logFileName = testcase.getTestcaseName() + "_" + System.currentTimeMillis();
-
 			MDC.put("logFileName", logFileName);
 			List<InfsResult> infreslist = new ArrayList<InfsResult>();
 			List<TestCaseItem> testcaseitemLst = testcaseservice.findTestCaseItem(String.valueOf(testcase.getId()));
@@ -198,7 +214,11 @@ public class TestRunController extends BaseController{
 			LogTreeItem caseTreeItem=new LogTreeItem();
 			caseTreeItem.setHaschildren(false);
 			caseTreeItem.setItemType(LogItemType.TESTCASELOG);
-			caseTreeItem.setParentid(String.valueOf(projectItemList.get(0).getId()));
+			if(!StringUtils.isEmpty(parentId)){
+				caseTreeItem.setParentid(parentId);
+			}else{
+				caseTreeItem.setParentid(String.valueOf(projectItemList.get(0).getId()));
+			}		
 			caseTreeItem.setText(caseresult.getName());
 			String url="../jtest/html/testcaselogview.html?projectId="+testcase.getProjectId()+"&testcaseresultId="+newcaseresult.getId();
 			caseTreeItem.setUrl(url);
