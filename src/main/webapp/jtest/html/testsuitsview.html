@@ -22,23 +22,15 @@
 				"testsuiteId")
 		projectid = GetQueryString(window.location.search.substr(1),
 				"testsuiteId")
-		testsuite = getTreeData()
-		contextmenu= $.ligerMenu({
-			top : 100,
-			left : 200,
-			width : 200,
-			items : [ {
-				text : '删除测试用例',
-				click : deltestcase
-			}]
-		})
-		datas = {}
-		datas.children = true
-		datas.id = testsuite["id"]
-		datas.text = testsuite["testsuiteName"]
+        
+        var menu = $.ligerMenu({ width: 120, items:
+        [
+            { text: '删除', click: deltestcase, icon: 'delete' } 
+        ]
+        });
 		$("#testsuitetree").ligerTree({
 			nodeWidth : 200,
-			data : [ datas ],
+			data : getTreeData(),
 			checkbox : true,
 			delay : true,
 			onExpand : function(node) {
@@ -59,12 +51,12 @@
 
 			},
 			onContextmenu : function(node, e) {
-				var data = node.data
-				contextmenu.show({
+				actionNode = node.data;
+				menu.show({
 					top : e.pageY,
 					left : e.pageX
 				});
-				
+				return false;
 			}
 		});
 
@@ -88,10 +80,14 @@
 			type : "GET",
 			async : false,
 			success : function(result) {
-				data = result;
+				testsuite = result
+				datas = {}
+				datas.children = true
+				datas.id = testsuite["id"]
+				datas.text = testsuite["testsuiteName"]
 			}
 		});
-		return data
+		return [ datas ]
 	}
 	function getTestCase() {
 		var url = "http://localhost:8080/testsuite/gettestcases"
@@ -148,6 +144,7 @@
 	function addTestCase() {
 		manager = $("#testsuitetree").ligerGetTreeManager();
 		manager2 = $("#testcasetree").ligerGetTreeManager();
+		data=manager2.getData()
 		var checkarray = manager2.getChecked()
 		if (checkarray.length == 0) {
 			alert("请勾选测试用列")
@@ -155,39 +152,52 @@
 			testcaseIds = JSON.parse(testsuite["testcaseIds"]);
 			for ( var i in checkarray) {
 				testcaseIds.push(checkarray[i].data.id)
+				nodedata=finddatabyid(data,checkarray[i].data.id)
+				manager2.remove(nodedata)
 			}
 			testsuite["testcaseIds"] = JSON.stringify(testcaseIds)
 		}
 		//更新到数据库
 		updateTestSuite()
-		//更新tree1，tree2
-		manager.refreshTree()
-		manager2.reload()
+		//从testcasetree中去除节点
+        manager.refreshTree()
+		manager2.refreshTree()
 
 	}
 	//删除测试用例
 	function deltestcase() {
 		manager = $("#testsuitetree").ligerGetTreeManager();
 		manager2 = $("#testcasetree").ligerGetTreeManager();
+		data=manager.getData()[0].children
 		var checkarray = manager.getSelected()
-		if (checkarray.length == 0) {
+		if (checkarray == null) {
 			alert("请勾选测试用列")
 		} else {
 			testcaseIds = JSON.parse(testsuite["testcaseIds"]);
-			newids=[]
+			newids = []
 			for ( var i in testcaseIds) {
-				if(checkarray[0].data.id!=testcaseIds[i]){
+				if (checkarray.data.id != testcaseIds[i]) {
 					newids.push(testcaseIds[i])
+				}else{
+					nodedata=finddatabyid(data,checkarray.data.id)
+					manager2.append(nodedata)
 				}
 			}
 			testsuite["testcaseIds"] = JSON.stringify(newids)
 		}
 		//更新到数据库
 		updateTestSuite()
-		//更新tree1，tree2
 		manager.refreshTree()
-		manager2.reload()
+		manager2.refreshTree()
 
+	}
+	function finddatabyid(data,id){
+		
+	    for(var i in data){
+	    	if(data[i].id==id){
+	    		return data[i]
+	    	}
+	    }
 	}
 
 	function updateTestSuite() {
@@ -231,8 +241,6 @@
 	<a class="l-button" onclick="addTestCase()"
 		style="float: left; margin-right: 10px;">添加测试用例</a>
 	<br>
-
-
 	<br>
 	<!-- 带复选框和图标 -->
 	<div class="all" style="width: 800px; height: 600px;">
