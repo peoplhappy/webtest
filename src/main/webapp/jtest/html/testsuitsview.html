@@ -16,38 +16,29 @@
 <script src="http://cdn.bootcss.com/sockjs-client/1.1.1/sockjs.min.js"></script>
 <script src="http://cdn.bootcss.com/stomp.js/2.3.3/stomp.js"></script>
 <script type="text/javascript">
-	var testsuiteid = null;
 	$(function() {
 		testsuiteid = GetQueryString(window.location.search.substr(1),
 				"testsuiteId")
 		projectid = GetQueryString(window.location.search.substr(1),
 				"testsuiteId")
-        
+      
         var menu = $.ligerMenu({ width: 120, items:
         [
             { text: '删除', click: deltestcase, icon: 'delete' } 
         ]
         });
+		testsuite=getTreeData();
+		datas = {}
+		datas.children = true
+		datas.id = testsuite["id"]
+		datas.text = testsuite["testsuiteName"]
 		$("#testsuitetree").ligerTree({
 			nodeWidth : 200,
-			data : getTreeData(),
+			data : [datas],
 			checkbox : true,
 			delay : true,
 			onExpand : function(node) {
-				var datas = getTestCase()
-				var manager = $("#testsuitetree").ligerGetTreeManager();
-				var childdatas = []
-				for ( var i in datas) {
-					childdata = {}
-					childdata.id = datas[i].id
-					childdata.text = datas[i].testcaseName
-					childdata.projectId = datas[i].projectId
-					childdatas.push(childdata)
-				}
-
-				if (datas != undefined) {
-					manager.reloadNode(node.target, childdatas)
-				}
+				getTestSuiteChildren(node.target)
 
 			},
 			onContextmenu : function(node, e) {
@@ -68,7 +59,10 @@
 		});
 
 		manager = $("#testsuitetree").ligerGetTreeManager();
-
+		parentnode = manager.getDataByID(testsuite["id"])
+	    parentnode = manager.getNodeDom(parentnode)
+		manager2 = $("#testcasetree").ligerGetTreeManager();
+		
 		$("#pageloading").hide();
 	});
 	function getTreeData() {
@@ -80,14 +74,11 @@
 			type : "GET",
 			async : false,
 			success : function(result) {
-				testsuite = result
-				datas = {}
-				datas.children = true
-				datas.id = testsuite["id"]
-				datas.text = testsuite["testsuiteName"]
+				data = result
+				
 			}
 		});
-		return [ datas ]
+		return data
 	}
 	function getTestCase() {
 		var url = "http://localhost:8080/testsuite/gettestcases"
@@ -142,12 +133,12 @@
 	}
 	//添加测试用例
 	function addTestCase() {
-		manager = $("#testsuitetree").ligerGetTreeManager();
-		manager2 = $("#testcasetree").ligerGetTreeManager();
+
 		data=manager2.getData()
 		var checkarray = manager2.getChecked()
 		if (checkarray.length == 0) {
 			alert("请勾选测试用列")
+			return
 		} else {
 			testcaseIds = JSON.parse(testsuite["testcaseIds"]);
 			for ( var i in checkarray) {
@@ -159,9 +150,10 @@
 		}
 		//更新到数据库
 		updateTestSuite()
-		//从testcasetree中去除节点
+		//从testsuite中添加节点
+        getTestSuiteChildren(parentnode)
         manager.refreshTree()
-		manager2.refreshTree()
+        console.log(manager.getData())
 
 	}
 	//删除测试用例
@@ -172,6 +164,7 @@
 		var checkarray = manager.getSelected()
 		if (checkarray == null) {
 			alert("请勾选测试用列")
+			return
 		} else {
 			testcaseIds = JSON.parse(testsuite["testcaseIds"]);
 			newids = []
@@ -187,7 +180,10 @@
 		}
 		//更新到数据库
 		updateTestSuite()
+		getTestSuiteChildren(parentnode)
 		manager.refreshTree()
+		console.log(manager.getData())
+	    manager2.setData(getProjectTestCase())
 		manager2.refreshTree()
 
 	}
@@ -199,7 +195,21 @@
 	    	}
 	    }
 	}
+    function getTestSuiteChildren(node){
+    	var datas = getTestCase()
+		var childdatas = []
+		for ( var i in datas) {
+			childdata = {}
+			childdata.id = datas[i].id
+			childdata.text = datas[i].testcaseName
+			childdata.projectId = datas[i].projectId
+			childdatas.push(childdata)
+		}
 
+		if (datas != undefined) {
+			manager.reloadNode(node, childdatas)
+		}
+    }
 	function updateTestSuite() {
 		var url = "http://localhost:8080/testsuite/createtestsuite"
 
