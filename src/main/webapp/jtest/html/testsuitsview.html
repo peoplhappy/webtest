@@ -10,23 +10,11 @@
 <link href="../../lib/ligerUI/skins/Aqua/css/ligerui-all.css"
 	rel="stylesheet" type="text/css">
 <script src="../../lib/ligerUI/js/core/base.js" type="text/javascript"></script>
-<script src="../../lib/ligerUI/js/plugins/ligerTree.js"
-	type="text/javascript"></script>
-<script src="../../lib/ligerUI/js/plugins/ligerPopupEdit.js"
-	type="text/javascript"></script>
+<script src="../../lib/ligerUI/js/ligerui.all.js"></script>
 <script src="../../jtest/stringutil.js"></script>
 <script src="../../jtest/websocket.js" type="text/javascript"></script>
 <script src="http://cdn.bootcss.com/sockjs-client/1.1.1/sockjs.min.js"></script>
 <script src="http://cdn.bootcss.com/stomp.js/2.3.3/stomp.js"></script>
-    
-<script src="../../lib/ligerUI/js/plugins/ligerCheckBox.js"
-	type="text/javascript"></script>
-    
-<script src="../../lib/ligerUI/js/plugins/ligerResizable.js"
-	type="text/javascript"></script>
-    
-<script src="../../lib/ligerUI/js/plugins/ligerComboBox.js"
-	type="text/javascript"></script>
 <script type="text/javascript">
 	var testsuiteid = null;
 	$(function() {
@@ -35,6 +23,15 @@
 		projectid = GetQueryString(window.location.search.substr(1),
 				"testsuiteId")
 		testsuite = getTreeData()
+		contextmenu= $.ligerMenu({
+			top : 100,
+			left : 200,
+			width : 200,
+			items : [ {
+				text : '删除测试用例',
+				click : deltestcase
+			}]
+		})
 		datas = {}
 		datas.children = true
 		datas.id = testsuite["id"]
@@ -60,6 +57,14 @@
 					manager.reloadNode(node.target, childdatas)
 				}
 
+			},
+			onContextmenu : function(node, e) {
+				var data = node.data
+				contextmenu.show({
+					top : e.pageY,
+					left : e.pageX
+				});
+				
 			}
 		});
 
@@ -152,6 +157,30 @@
 				testcaseIds.push(checkarray[i].data.id)
 			}
 			testsuite["testcaseIds"] = JSON.stringify(testcaseIds)
+		}
+		//更新到数据库
+		updateTestSuite()
+		//更新tree1，tree2
+		manager.refreshTree()
+		manager2.reload()
+
+	}
+	//删除测试用例
+	function deltestcase() {
+		manager = $("#testsuitetree").ligerGetTreeManager();
+		manager2 = $("#testcasetree").ligerGetTreeManager();
+		var checkarray = manager.getSelected()
+		if (checkarray.length == 0) {
+			alert("请勾选测试用列")
+		} else {
+			testcaseIds = JSON.parse(testsuite["testcaseIds"]);
+			newids=[]
+			for ( var i in testcaseIds) {
+				if(checkarray[0].data.id!=testcaseIds[i]){
+					newids.push(testcaseIds[i])
+				}
+			}
+			testsuite["testcaseIds"] = JSON.stringify(newids)
 		}
 		//更新到数据库
 		updateTestSuite()

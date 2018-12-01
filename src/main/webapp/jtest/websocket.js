@@ -2,6 +2,7 @@
  * websocket连接协议
  */
 uid=uuid()
+var tip
 console.log(uid)
 var stompClient = null;
 // 加载完浏览器后 调用connect（），打开双通道
@@ -22,8 +23,14 @@ function connect() {
 		console.log('Connected:' + frame);
 		// 通过stompClient.subscribe订阅/topic/getResponse 目标(destination)发送的消息
 		stompClient.subscribe('/user/' + uid + '/message', function(message){  
-	         var messageEntity = JSON.parse(message.body);
-	         console.log(messageEntity)
+	         console.log(message.body)
+	         if(tip==null){
+	        	 tip=$.ligerDialog.tip({  title: '提示信息',content:message.body });
+	         }else{
+	        	 tip.close()
+	        	 tip=$.ligerDialog.tip({  title: '提示信息',content:message.body });
+	         }
+	         
 	    });  
 	});
 }
