@@ -16,7 +16,7 @@
             alert(item.text);
         }
         function getData(projectid) {
-			var url = "http://localhost:8080/infs/getAllinfs?projectId="+projectid
+			var url = "http://"+window.location.host+"/infs/getAllinfs?projectId="+projectid
 			var data = {};
 			$.ajax({
 				url : url,
@@ -226,7 +226,7 @@
 		}
 		//将修改后结果上传到后端,优先检查是否为空
 		function sumitresult(datas){
-			var url = "http://localhost:8080/infs/submitinfs"
+			var url = "http://"+window.location.host+"/infs/submitinfs"
 				var resultdata;
 				$.ajax({
 					url : url,
@@ -255,7 +255,7 @@
 		}
 		
 		function deleteInfo(datas){
-			var url = "http://localhost:8080/infs/deleteInfs"
+			var url = "http://"+window.location.host+"/infs/deleteInfs"
 				var resultdata;
 				$.ajax({
 					url : url,

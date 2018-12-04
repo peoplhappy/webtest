@@ -10,7 +10,7 @@ var iconmap={
 		"TESTSUITLOG":testsuiteicon,
 }
 function getlogItemLstByType(type) {
-	var url = "http://localhost:8080/testresult/tree/getItemByType?itemType="+type
+	var url = "http://"+window.location.host+"/testresult/tree/getItemByType?itemType="+type
 	var data = []
 	$.ajax({
 		url : url,
@@ -42,7 +42,7 @@ function getLogChildren(data) {
 	return childdata;
 }
 function getLogItemListByParent(id) {
-	var url = "http://localhost:8080/testresult/tree/getItemlst?parentid=" + id
+	var url = "http://"+window.location.host+"/testresult/tree/getItemlst?parentid=" + id
 	var data=[];
 	$.ajax({
 		url : url,

@@ -212,7 +212,7 @@ function viewProject() {
  * 运行测试用例
  */
 function runtestcase() {
-	var url = "http://localhost:8080/run/runtestcase"
+	var url = "http://"+window.location.host+"/run/runtestcase"
 	var postdata=[]
 	$.ajax({
 		url : url,

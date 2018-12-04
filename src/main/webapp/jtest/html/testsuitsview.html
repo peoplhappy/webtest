@@ -66,7 +66,7 @@
 		$("#pageloading").hide();
 	});
 	function getTreeData() {
-		var url = "http://localhost:8080/testsuite/gettestsuite?testsuiteId="
+		var url = "http://"+window.location.host+"/testsuite/gettestsuite?testsuiteId="
 				+ testsuiteid
 		var data = {};
 		$.ajax({
@@ -81,7 +81,7 @@
 		return data
 	}
 	function getTestCase() {
-		var url = "http://localhost:8080/testsuite/gettestcases"
+		var url = "http://"+window.location.host+"/testsuite/gettestcases"
 		var data = {};
 		$.ajax({
 			url : url,
@@ -97,7 +97,7 @@
 	}
 
 	function getAllTestCase() {
-		var url = "http://localhost:8080/testsuite/gettestcases"
+		var url = "http://"+window.location.host+"/testsuite/gettestcases"
 		var data = {};
 		$.ajax({
 			url : url,
@@ -112,7 +112,7 @@
 	}
 
 	function getProjectTestCase() {
-		var url = "http://localhost:8080/testsuite/getprojecttestcase"
+		var url = "http://"+window.location.host+"/testsuite/getprojecttestcase"
 		var testdata = []
 		$.ajax({
 			url : url,
@@ -211,7 +211,7 @@
 		}
     }
 	function updateTestSuite() {
-		var url = "http://localhost:8080/testsuite/createtestsuite"
+		var url = "http://"+window.location.host+"/testsuite/createtestsuite"
 
 		$.ajax({
 			url : url,
@@ -226,7 +226,7 @@
 	}
 
 	function runtestsuite() {
-		var url = "http://localhost:8080/run/runtestsuits"
+		var url = "http://"+window.location.host+"/run/runtestsuits"
 
 		$.ajax({
 			url : url,

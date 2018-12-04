@@ -17,7 +17,7 @@ window.onunload = function() {
 function connect() {
 	//获取ip
 
-	var socket = new SockJS('http://localhost:8080/websocket'); // 连接SockJS的endpoint名称为"websocket"
+	var socket = new SockJS("http://"+window.location.host+"/websocket"); // 连接SockJS的endpoint名称为"websocket"
 	stompClient = Stomp.over(socket);// 使用STMOP子协议的WebSocket客户端
 	stompClient.connect({}, function(frame) {// 连接WebSocket服务端
 		console.log('Connected:' + frame);

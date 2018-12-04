@@ -16,7 +16,7 @@
             alert(item.text);
         }
         function getData(projectid) {
-			var url = "http://localhost:8080/config/getConfigAll?projectId="+projectid
+			var url = "http://"+window.location.host+"/config/getConfigAll?projectId="+projectid
 			var data = {};
 			$.ajax({
 				url : url,
@@ -140,7 +140,7 @@
 		}
 		//将修改后结果上传到后端,优先检查是否为空
 		function sumitresult(datas){
-			var url = "http://localhost:8080/config/submit"
+			var url = "http://"+window.location.host+"/config/submit"
 				var resultdata;
 				$.ajax({
 					url : url,
@@ -160,7 +160,7 @@
 		}
 		
 		function deleteInfo(datas){
-			var url = "http://localhost:8080/config/deleteconfig"
+			var url = "http://"+window.location.host+"/config/deleteconfig"
 				var resultdata;
 				$.ajax({
 					url : url,

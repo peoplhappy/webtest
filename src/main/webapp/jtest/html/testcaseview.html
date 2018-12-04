@@ -24,7 +24,7 @@
 						alert(item.text);
 					}
 					function getData(projectid) {
-						var url = "http://localhost:8080/testcase/getTestCaseItem?projectId="
+						var url = "http://"+window.location.host+"/testcase/getTestCaseItem?projectId="
 								+ projectid + "&testcaseId=" + testcaseId
 						var data = {};
 						$.ajax({
@@ -151,7 +151,7 @@
 
 					}
 					function getTestCase() {
-						var url = "http://localhost:8080/testcase/gettestcase?projectId="
+						var url = "http://"+window.location.host+"/testcase/gettestcase?projectId="
 								+ projectid + "&testcaseId=" + testcaseId
 						var data = {};
 						$.ajax({
@@ -198,7 +198,7 @@
 					}
 					//将修改后结果上传到后端,优先检查是否为空
 					function sumitresult(datas) {
-						var url = "http://localhost:8080/testcase/createTestcaseitem"
+						var url = "http://"+window.location.host+"/testcase/createTestcaseitem"
 						var resultdata;
 						$.ajax({
 							url : url,
@@ -221,7 +221,7 @@
 					}
 
 					function deleteInfo(datas) {
-						var url = "http://localhost:8080/testcase/deleteTestcaseItem"
+						var url = "http://"+window.location.host+"/testcase/deleteTestcaseItem"
 						var resultdata;
 						$.ajax({
 							url : url,
@@ -244,7 +244,7 @@
 					}
 
 					function runtestcase() {
-						var url = "http://localhost:8080/run/runtestcase"
+						var url = "http://"+window.location.host+"/run/runtestcase"
 						$.ajax({
 							url : url,
 							type : "POST",

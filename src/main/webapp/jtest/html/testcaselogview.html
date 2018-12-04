@@ -34,7 +34,7 @@
             $("#pageloading").hide();
         });
         function getTestCaseResult(testcaseresultId){
-        	var url = "http://localhost:8080/result/testcaseresult?testcaseresultId="+testcaseresultId
+        	var url = "http://"+window.location.host+"/result/testcaseresult?testcaseresultId="+testcaseresultId
 			var data = {};
 			$.ajax({
 				url : url,
@@ -48,7 +48,7 @@
         }
         
         function getlogcontent(url){
-        	var url = "http://localhost:8080/result/getlogcontent?logfileurl="+url
+        	var url = "http://"+window.location.host+"/result/getlogcontent?logfileurl="+url
 			var data = {};
 			$.ajax({
 				url : url,

@@ -18,7 +18,7 @@ var iconmap={
 		"PROTOCALCONFIGFILE":protocalconfigicon
 }
 function getItemLst(parentid) {
-	var url = "http://localhost:8080/tree/getItemlst?parentid="+parentid
+	var url = "http://"+window.location.host+"/tree/getItemlst?parentid="+parentid
 	var data = []
 	$.ajax({
 		url : url,
@@ -50,7 +50,7 @@ function getChildren(data) {
 	return childdata;
 }
 function getItem(id) {
-	var url = "http://localhost:8080/tree/getItem" + "?id=" + id
+	var url = "http://"+window.location.host+"/tree/getItem" + "?id=" + id
 	var data;
 	$.ajax({
 		url : url,
@@ -66,7 +66,7 @@ function getItem(id) {
 }
 
 function createItem(parent, name, itemType) {
-	var url = "http://localhost:8080/tree/createItem"
+	var url = "http://"+window.location.host+"/tree/createItem"
 	// 增加判断同级节点是否有重名对象，若有禁止新增
 	if (checkRepeat(parent,name)) {
 		$.ligerDialog.error('同级目录下有同名文件，请检查')
@@ -123,7 +123,7 @@ function createItem(parent, name, itemType) {
 }
 
 function deleteitem(parent, node) {
-	var url = "http://localhost:8080/tree/deleteItem"
+	var url = "http://"+window.location.host+"/tree/deleteItem"
 	$.ajax({
 		url : url,
 		async : false,
@@ -163,7 +163,7 @@ function deleteitem(parent, node) {
 }
 
 function modifyItemName(parent,node,text){
-	var url = "http://localhost:8080/tree/modifyItem"
+	var url = "http://"+window.location.host+"/tree/modifyItem"
 	if (checkRepeat(parent,name)) {
 		$.ligerDialog.error('同级目录下有同名文件，请检查')
 		return

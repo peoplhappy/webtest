@@ -15,7 +15,7 @@
             alert(item.text);
         }
         function getData() {
-			var url = "http://localhost:8080/protocal/getProtocalAll"
+			var url = "http://"+window.location.host+"/protocal/getProtocalAll"
 			var data = {};
 			$.ajax({
 				url : url,
@@ -195,7 +195,7 @@
 		}
 		//将修改后结果上传到后端,优先检查是否为空
 		function sumitresult(datas){
-			var url = "http://localhost:8080/protocal/submitprotocal"
+			var url = "http://"+window.location.host+"/protocal/submitprotocal"
 				var resultdata;
 				$.ajax({
 					url : url,
@@ -219,7 +219,7 @@
 		}
 		
 		function deleteInfo(datas){
-			var url = "http://localhost:8080/protocal/deleteprotocals"
+			var url = "http://"+window.location.host+"/protocal/deleteprotocals"
 				var resultdata;
 				$.ajax({
 					url : url,
