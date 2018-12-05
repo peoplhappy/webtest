@@ -16,83 +16,121 @@
 				<script src="../../lib/ligerUI/js/ligerui.all.js"></script>
 				<script src="../../jtest/stringutil.js"></script>
 				<script type="text/javascript">
-        $(function ()
-        {
-        	
-        	//获取url的参数
-        	projectid=GetQueryString(window.location.search.substr(1),"projectId")
-        	testcaseresultId=GetQueryString(window.location.search.substr(1),"testcaseresultId")
-        	//获取testcaseresult
-        	testcaseresult=getTestCaseResult(testcaseresultId)
-        	//获取接口执行结果
-        	infsresult=getInfsResult()
-        	console.log(testcaseresult.logfileurl)
-        	logcontent=getlogcontent(testcaseresult.logfileurl)
-        	console.log(logcontent)
-        	$("div.l-layout-content").html(logcontent)
- 
-              
- 
-            $("#pageloading").hide();
-        });
-        function getTestCaseResult(testcaseresultId){
-        	var url = "http://"+window.location.host+"/result/testcaseresult?testcaseresultId="+testcaseresultId
-			var data = {};
-			$.ajax({
-				url : url,
-				type : "GET",
-				async : false,
-				success : function(result) {
-					data=result
-				}
-			});
-			return data
-        }
-        
-        function getlogcontent(url){
-        	var url = "http://"+window.location.host+"/result/getlogcontent?logfileurl="+url
-			var data = {};
-			$.ajax({
-				url : url,
-				type : "GET",
-				async : false,
-				success : function(result) {
-					data=result
-				}
-			});
-			return data
-        }
-        
-        function getInfsResult(){
-        	var url = "http://"+window.location.host+"/result/getinfsresult?testcaseresultId="+testcaseresultId
-			var data = {};
-			$.ajax({
-				url : url,
-				type : "GET",
-				async : false,
-				success : function(result) {
-					data=result
-				}
-			});
-			return data
-        	
-        }
-        
-    </script> 
-                <div position="center" title="" class="l-layout-content">
-            <h4>日志内容</h4>
-            默认为固定layout的高度百分一百
-            </div>
+					$(function() {
 
-				<div class="l-loading" style="display: block" id="pageloading"></div>
+						//获取url的参数
+						projectid = GetQueryString(window.location.search
+								.substr(1), "projectId")
+						testcaseresultId = GetQueryString(
+								window.location.search.substr(1),
+								"testcaseresultId")
+						//获取testcaseresult
+						testcaseresult = getTestCaseResult(testcaseresultId)
+						//获取接口执行结果
+						infsresult = getInfsResult()
+						
+						//构造执行结果
+					   	resultcontent="用列名称:"+testcaseresult.name.split("_")[0]+"<br/>"+"开始时间:"+testcaseresult.starttime+"<Br/>"+"结束时间:"+testcaseresult.endtime+"<br/>"+"执行结果:"+testcaseresult.excuteResult
+						
+						console.log(infsresult)
+						console.log(testcaseresult)
+						logcontent = getlogcontent(testcaseresult.logfileurl)
+						console.log(logcontent)
+						//$("div.l-layout-content").html(logcontent)
+						assertcontent="<table border='1'><tr><th>验证内容</th><th>期望值</th><th>实际值</th><th>结果</th></tr>"
+						for(var i in infsresult){
+							
+							if(infsresult[i].assertresultlist!="OK"){
+							   assertlist=JSON.parse(infsresult[i].assertresultlist) 
+							   for(var j in assertlist){
+									assertcontent=assertcontent+"<tr><th>"+assertlist[i].assertMsg+"</th><th>"+assertlist[i].ExpectValue+"</th><th>"+
+									assertlist[i].actualValue+"</th><th>"+assertlist[i].assertResult+"</th></tr>"
+								}
+							}
+							
+							
+						}
+						assertcontent=assertcontent+"</table>"
+						$("#portalMain").ligerPortal({
+							columns : [ {
+								width : 1000,
+								panels : [ {
+									title : '执行信息',
+									width : '100%',
+									height : 200,
+									content : resultcontent
+								}]
+							}, 
+							{
+								width : 1000,
+								panels : [ {
+									title : '验证点',
+									width : '100%',
+									height : 200,
+									content : assertcontent
+								}]
+							},{
+								width : 1000,
+								panels : [ {
+									title : '日志内容',
+									width : '100%',
+									height :'100%',
+									content : logcontent
+								} ]
+							} ]
+						});
 
+						$("#pageloading").hide();
+					});
+					function getTestCaseResult(testcaseresultId) {
+						var url = "http://" + window.location.host
+								+ "/result/testcaseresult?testcaseresultId="
+								+ testcaseresultId
+						var data = {};
+						$.ajax({
+							url : url,
+							type : "GET",
+							async : false,
+							success : function(result) {
+								data = result
+							}
+						});
+						return data
+					}
 
+					function getlogcontent(url) {
+						var url = "http://" + window.location.host
+								+ "/result/getlogcontent?logfileurl=" + url
+						var data = {};
+						$.ajax({
+							url : url,
+							type : "GET",
+							async : false,
+							success : function(result) {
+								data = result
+							}
+						});
+						return data
+					}
 
-				<div class="l-clear"></div>
+					function getInfsResult() {
+						var url = "http://" + window.location.host
+								+ "/result/getinfsresult?testcaseresultId="
+								+ testcaseresultId
+						var data = {};
+						$.ajax({
+							url : url,
+							type : "GET",
+							async : false,
+							success : function(result) {
+								data = result
+							}
+						});
+						return data
 
-				<div id="maingrid"></div>
-
-				<div style="display: none;"></div>
+					}
+				</script>
+				<div style="width: 100%;" id="portalMain">
+				</div>
 </head>
-
 </html>
