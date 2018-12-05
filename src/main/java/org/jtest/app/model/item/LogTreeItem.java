@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.jtest.app.model.param.ResultType;
+
 /**
  * 日志结果存储节点
  * @author pengchen
@@ -37,6 +39,16 @@ public class LogTreeItem implements Serializable {
 	private String projectId;// Root为根目录
 	@Column(nullable = true, name = "text")
 	private String text;// 显示在树上的内容
+	@Column(nullable = true, name = "result")
+	private String excuteresult=ResultType.OK.name();
+	public String getExcuteresult() {
+		return excuteresult;
+	}
+
+	public void setExcuteresult(String excuteresult) {
+		this.excuteresult = excuteresult;
+	}
+
 	public Long getId() {
 		return id;
 	}

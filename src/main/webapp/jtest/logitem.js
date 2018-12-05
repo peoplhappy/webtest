@@ -2,12 +2,14 @@
  * 根据projectid获取新数据
  */
 var projecticon="../lib/ligerUI/skins/Aqua/images/tree/project_source_folder.gif"
-var testcaseicon="../lib/ligerUI/skins/Aqua/images/tree/tree-leaf.gif"
+var testcaseicon="../lib/ligerUI/skins/icons/right.gif"
+var testcaseerricon="../lib/ligerUI/skins/icons/candle.gif"
 var testsuiteicon="../lib/ligerUI/skins/Aqua/images/tree/tree-leaf.gif"	
 var iconmap={
 		"PROJECT":projecticon,
 		"TESTCASELOG":testcaseicon,
 		"TESTSUITLOG":testsuiteicon,
+		"TESTCASEERR":testcaseerricon
 }
 function getlogItemLstByType(type) {
 	var url = "http://"+window.location.host+"/testresult/tree/getItemByType?itemType="+type
@@ -17,13 +19,18 @@ function getlogItemLstByType(type) {
 		async : false,
 		success : function(result) {
 			for ( var i in result) {
+				if(result[i]["excuteresult"]=="POK"){
+					icon=iconmap["TESTCASEERR"]
+				}else{					
+					icon=iconmap[result[i]["itemType"]]
+				}
 				var o = {
 					text : result[i]["text"],
 					id : result[i]["id"],
 					parentid : result[i]["parentid"],
 					children : result[i]["haschildren"],
 					itemType : result[i]["itemType"],
-					icon:iconmap[result[i]["itemType"]],
+					icon:icon,
 					projectId:result[i]["projectId"],
 					url : result[i]["url"],
 				}
@@ -49,13 +56,18 @@ function getLogItemListByParent(id) {
 		async : false,
 		success : function(result) {
 			for ( var i in result) {
+				if(result[i]["excuteresult"]=="POK"){
+					icon=iconmap["TESTCASEERR"]
+				}else{					
+					icon=iconmap[result[i]["itemType"]]
+				}
 				var o = {
 					text : result[i]["text"],
 					id : result[i]["id"],
 					parentid : result[i]["parentid"],
 					children : result[i]["haschildren"],
 					itemType : result[i]["itemType"],
-					icon:iconmap[result[i]["itemType"]],
+					icon:icon,
 					projectId:result[i]["projectId"],
 					url : result[i]["url"],
 				}

@@ -50,6 +50,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.jtest.app.model.param.ResultType;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -100,7 +101,7 @@ public class TestRunController extends BaseController{
 		private RunType type;
 		private Object testObj;
 		private String userId;
-
+        
 
 		public RunThread(RunType type,String userId, Object testObject) {
 			this.type = type;
@@ -166,7 +167,7 @@ public class TestRunController extends BaseController{
 			// 获取每个接口
 			TestCaseResult caseresult = new TestCaseResult();
 			caseresult.setName(logFileName);
-			caseresult.setExcuteResult("OK");
+			caseresult.setExcuteResult(ResultType.OK.name());
 			caseresult.setLogfileurl("/logs/"+logFileName + ".log");
 			caseresult.setStarttime(TimeUtil.getCurrentTime());
 			caseresult.setProjectId(testcase.getProjectId());
@@ -182,8 +183,8 @@ public class TestRunController extends BaseController{
 						if (protocalinfo.getLanguageName().equalsIgnoreCase("java")) {
 							if (protocalinfo.getProtocalname().equalsIgnoreCase("HTTP")) {
 								InfsResult result = HttpExcute(protocalinfo, inf, testcaseitemLst.get(i));
-								if (result.getExcuteResult().equalsIgnoreCase("pok")) {
-									caseresult.setExcuteResult("POK");
+								if (result.getExcuteResult().equalsIgnoreCase(ResultType.POK.name())) {
+									caseresult.setExcuteResult(ResultType.POK.name());
 								}
 								infreslist.add(result);
 							} else {
@@ -201,10 +202,10 @@ public class TestRunController extends BaseController{
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
 				LogManager.getLogger().logError("excute infs throw a exception", e);
-				caseresult.setExcuteResult("POK");
+				caseresult.setExcuteResult(ResultType.POK.name());
 			}  catch (Exception e) {
 				LogManager.getLogger().logError("excute infs throw a exception", e);
-				caseresult.setExcuteResult("POK");
+				caseresult.setExcuteResult(ResultType.POK.name());
 			}
 			// 将case存入数据库
 			caseresult.setEndtime(TimeUtil.getCurrentTime());
@@ -220,6 +221,7 @@ public class TestRunController extends BaseController{
 				caseTreeItem.setParentid(String.valueOf(projectItemList.get(0).getId()));
 			}		
 			caseTreeItem.setText(caseresult.getName());
+			caseTreeItem.setExcuteresult(caseresult.getExcuteResult());
 			String url="../jtest/html/testcaselogview.html?projectId="+testcase.getProjectId()+"&testcaseresultId="+newcaseresult.getId();
 			caseTreeItem.setUrl(url);
 			logtreeitemservice.createItem(caseTreeItem);
@@ -245,7 +247,7 @@ public class TestRunController extends BaseController{
 			LogManager.getLogger().logInfo("验证点列表:" + assertlist);
 			if (StringUtils.isEmpty(assertlist)) {
 				// 若未填入验证点默认OK
-				return "OK";
+				return ResultType.OK.name();
 			} else {
 				List<String> list = gson.fromJson(assertlist, new TypeToken<List<String>>() {
 				}.getType());
@@ -283,7 +285,7 @@ public class TestRunController extends BaseController{
 
 		private InfsResult HttpExcute(ProtocalInfo protocalinfo, InfsInfo inf, TestCaseItem item) {
 			InfsResult infres = new InfsResult();
-			infres.setExcuteResult("OK");
+			infres.setExcuteResult(ResultType.OK.name());
 			infres.setStarttime(TimeUtil.getCurrentTime());
 			infres.setInfsName(inf.getInfsname());
 			try {
@@ -341,19 +343,19 @@ public class TestRunController extends BaseController{
 				infres.setAssertresultlist(assertList);
 				infres.setInfsName(inf.getInfsname());
 				// 获取结果
-				if (!assertList.equals("OK")) {
+				if (!assertList.equals(ResultType.OK)) {
 					List<AssertModel> list = gson.fromJson(assertList, new TypeToken<List<AssertModel>>() {
 					}.getType());
 					for (int j = 0; j < list.size(); j++) {
-						if (list.get(j).isAssertResult().equalsIgnoreCase("pok")) {
-							infres.setExcuteResult("pok");
+						if (list.get(j).isAssertResult().equalsIgnoreCase(ResultType.POK.name())) {
+							infres.setExcuteResult(ResultType.POK.name());
 						}
 					}
 				}
 			} catch (Exception e) {
 				LogManager.getLogger().logError("excute interface" + item.getCallbackname() + "error", e);
 				infres.setEndtime(TimeUtil.getCurrentTime());
-				infres.setExcuteResult("pok");
+				infres.setExcuteResult(ResultType.POK.name());
 			}
 			return infres;
 		}

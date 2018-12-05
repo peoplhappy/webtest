@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 import org.jtest.app.log.LogManager;
 import org.jtest.app.model.asserts.AssertModel;
+import org.jtest.app.model.param.ResultType;
 import org.springframework.util.StringUtils;
 
 import com.google.gson.Gson;
@@ -88,11 +89,11 @@ public class StringApiUtil {
 		model.setExpectValue(expect.toString());
 		model.setAssertMsg(message.toString());
 		if (expect.toString().equalsIgnoreCase(actual.toString())) {
-			model.setAssertResult("OK");
+			model.setAssertResult(ResultType.OK.name());
 		//	LogManager.getLogger().LogInfo("验证点验证成功"+gson.toJson(model, AssertModel.class));
             
 		} else {
-			model.setAssertResult("POK");
+			model.setAssertResult(ResultType.POK.name());
 		//	LogManager.getLogger().LogError("验证点验证失败"+gson.toJson(model, AssertModel.class));
 		}
         
