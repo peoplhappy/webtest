@@ -13,4 +13,5 @@ import org.jtest.app.model.infs.InfsResult;
  */
 public interface InfsResultService {
 	public InfsResult saveResult(InfsResult result);
+	public List<InfsResult> findInterfaceResultList(String testcaseresultid);
 }

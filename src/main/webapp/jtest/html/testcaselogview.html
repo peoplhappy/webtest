@@ -24,6 +24,8 @@
         	testcaseresultId=GetQueryString(window.location.search.substr(1),"testcaseresultId")
         	//获取testcaseresult
         	testcaseresult=getTestCaseResult(testcaseresultId)
+        	//获取接口执行结果
+        	infsresult=getInfsResult()
         	console.log(testcaseresult.logfileurl)
         	logcontent=getlogcontent(testcaseresult.logfileurl)
         	console.log(logcontent)
@@ -59,6 +61,21 @@
 				}
 			});
 			return data
+        }
+        
+        function getInfsResult(){
+        	var url = "http://"+window.location.host+"/result/getinfsresult?testcaseresultId="+testcaseresultId
+			var data = {};
+			$.ajax({
+				url : url,
+				type : "GET",
+				async : false,
+				success : function(result) {
+					data=result
+				}
+			});
+			return data
+        	
         }
         
     </script> 

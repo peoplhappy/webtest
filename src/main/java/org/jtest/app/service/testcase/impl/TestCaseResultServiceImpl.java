@@ -5,6 +5,7 @@ import java.util.List;
 import org.jtest.app.dao.testcase.TestCaseResultDao;
 import org.jtest.app.model.infs.InfsResult;
 import org.jtest.app.model.testcase.TestCaseResult;
+import org.jtest.app.service.infs.InfsResultService;
 import org.jtest.app.service.testcase.TestCaseResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,9 @@ public class TestCaseResultServiceImpl implements TestCaseResultService{
     @Autowired
     
     private TestCaseResultDao resdao;
+    
+    @Autowired
+    private InfsResultService infsres;
 	@Override
 	public TestCaseResult findTestCaseResult(String testcaseresultId) {
 		// TODO Auto-generated method stub
@@ -24,7 +28,7 @@ public class TestCaseResultServiceImpl implements TestCaseResultService{
 	@Override
 	public List<InfsResult> findInfsResultList(String testcaseresultId) {
 		// TODO Auto-generated method stub
-		return null;
+		return infsres.findInterfaceResultList(testcaseresultId);
 	}
 
 	@Override

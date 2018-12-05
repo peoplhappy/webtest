@@ -6,9 +6,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import org.jtest.app.config.BeanContext;
 import org.jtest.app.controller.BaseController;
+import org.jtest.app.model.infs.InfsResult;
 import org.jtest.app.model.testcase.TestCaseResult;
 import org.jtest.app.service.infs.InfsResultService;
 import org.jtest.app.service.testcase.TestCaseResultService;
@@ -57,6 +59,10 @@ public class TestCaseResultController extends BaseController {
 		return sb.toString();
 		
 
+	}
+	@GetMapping("/result/getinfsresult")
+	public List<InfsResult> getInfstestResult(@RequestParam(value = "testcaseresultId") String testcaseresultId){	
+		return testcaseResultservice.findInfsResultList(testcaseresultId);
 	}
 
 }
