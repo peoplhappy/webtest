@@ -38,9 +38,9 @@
 						});
 						return data
 					}
-
+					var asserttypeData = [{ type: "assertEqual", text: '相等' }, { type: "assertNotEqual", text: '不相等'}];
 					$(function() {
-
+                        
 						//获取url的参数
 						projectid = GetQueryString(window.location.search
 								.substr(1), "projectId")
@@ -84,7 +84,6 @@
 														align : 'left',
 														editor : {
 															type : 'text',
-
 														}
 													},
 													{
