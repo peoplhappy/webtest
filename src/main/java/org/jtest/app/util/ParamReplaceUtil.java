@@ -73,6 +73,7 @@ public class ParamReplaceUtil {
 			replaced = ReplacedStrReplaced(replaced);
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			replaced = null;// 发生错误后赋值为
 		}
 		return replaced;

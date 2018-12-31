@@ -307,13 +307,7 @@ public class TestRunController extends BaseController{
 					if (method.getName().equalsIgnoreCase(protocalinfo.getMethodName())) {
 						// 执行方法
 						
-						String url = "";
-						// 修改转换
-						if (MapUtil.getMapValue("domain") != null) {
-							url = MapUtil.getMapValue("domain") + inf.getInfsurl();
-						} else {
-							url = inf.getInfsurl();
-						}
+						String url =inf.getInfsurl();
 						String presentparamaterstr = ParamReplaceUtil.Replace(item.getPresetparameter());
 						// 压入map中
 						
