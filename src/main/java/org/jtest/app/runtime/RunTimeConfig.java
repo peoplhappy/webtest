@@ -17,4 +17,9 @@ public class RunTimeConfig {
     }
     
     public static String currentLogPath;
+    
+    public synchronized static void setValue(String key,String value){
+    	Thread thread=Thread.currentThread();
+    	
+    }
 }
